@@ -38,7 +38,7 @@ work original in ucs-ros-pkg.
 					iyz="0" izz="0.011763977943" />
 			</inertial>
 
-			<visual >
+			<visual name="base_visual">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="pioneer_geom">
 					<mesh filename="package://p3dx_description/meshes/${suffix}_wheel.stl" />
@@ -72,7 +72,7 @@ work original in ucs-ros-pkg.
 					iyz="0" izz="0.011763977943" />
 			</inertial>
 
-			<visual>
+			<visual name="base_visual">
 				<origin xyz="0 0 0" rpy="0 0 0" />
 				<geometry name="pioneer_geom">
 					<mesh filename="package://p3dx_description/meshes/${suffix}_hubcap.stl" />

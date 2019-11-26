@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <robot>
 
   <!-- properties (constants) -->
-  <property name="ns" value="/mouse" />
+  <property name="ns" value="/cat" />
 
   <!-- ros_control plugin -->
   <gazebo>
