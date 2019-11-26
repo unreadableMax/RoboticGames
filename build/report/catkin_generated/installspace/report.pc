@@ -1,0 +1,8 @@
+prefix=/home/max/RoboticGames/catkin_ws/install
+
+Name: report
+Description: Description of report
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/max/RoboticGames/catkin_ws/install/lib 
+Requires: 

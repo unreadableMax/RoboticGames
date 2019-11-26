@@ -1,0 +1,11 @@
+<launch>
+	<node name="dead_reckoning"      type="dead_reckoning_sim.py" pkg="exercise_2" args="0.1"/>
+	<node name="laser_to_sonar"      type="laser_to_sonar.py" pkg="exercise_1"/>
+	<node name="collision_avoidance" type="col_avoid.py"     pkg="fusion1"/>
+	<node name="free_space" type="free_space.py"     pkg="fusion1"/>
+	<node name="fusion" type="fusion.py"     pkg="fusion1"/>
+	<node name="record" pkg="rosbag" type="record" args="-O homing_path /p3dx/p3dx/base_pose_ground_truth"/>
+	<node name="homing" type="homing.py"     pkg="fusion1" args="4.0 0.0"/>
+	<include file="$(find exercise_3)/launch/gazebo-launch/gazebo3-1.launch"/>
+	<!--<include file="$(find exercise_1)/launch/gazebo1.launch"/>-->
+</launch>
