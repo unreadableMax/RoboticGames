@@ -1,2 +1,0 @@
-exercise_1:exercise_2:exercise_3:fusion1:p3dx/p3dx_control:p3dx/p3dx_description:p3dx/p3dx_gazebo:report
--DCATKIN_DEVEL_PREFIX=/home/max/RoboticGames/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/max/RoboticGames/catkin_ws/install -G Unix Makefiles
