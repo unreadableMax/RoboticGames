@@ -110,7 +110,7 @@ class Fusion:
         res_signal = Twist()
         # todo: wand-folger in CA rein kriegen
         res_signal.angular.z = prevail_gate(self.CA_rot,
-                                            or_gate(5.0*self.HO_rot, self.FS_rot))
+                                            np.clip(or_gate(10.0*self.HO_rot, self.FS_rot), -1, 1))
 
         res_signal.linear.x = self.CA_lin
 

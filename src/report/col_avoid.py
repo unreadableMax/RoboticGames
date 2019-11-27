@@ -51,7 +51,7 @@ class CollisionAvoidance:
         max_lin_speed = 1.0  # .40
         max_rot_speed = 1.0
         min_range = .2  # 0.5
-        max_range = .4
+        max_range = .3
         #current_smallest_dist = np.min(sonar_ranges[1:6])
         current_smallest_dist = np.min(sonar_ranges)
         default_speed = 1.0  # 0.4
@@ -63,7 +63,7 @@ class CollisionAvoidance:
         if current_smallest_dist < max_range:
             m = 1/(max_range-min_range)
             velocity_adjustment.linear.x = np.clip(
-                m*(current_smallest_dist-min_range), -0.0, max_lin_speed)
+                m*(current_smallest_dist-min_range), -max_lin_speed, max_lin_speed)
 
             turn_direction = -force[1]
             velocity_adjustment.angular.z = np.sign(

@@ -80,7 +80,7 @@ def closed_loop(position, orientation, target):
         velocity_adjustment.linear.x = np.clip(
             lin_speed, -max_speed, max_speed)
 
-    velocity_adjustment.linear.x = distance_to_target
+    #velocity_adjustment.linear.x = distance_to_target
 
     rot_speed = p_rot * (-.5 * rot_error + .5)  # mapping [-1,1] to [1,0]
     rot_speed = np.clip(rot_speed, min_rot_speed, max_rot_speed)
