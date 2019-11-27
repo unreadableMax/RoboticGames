@@ -1,8 +1,0 @@
-prefix=/home/max/RoboticGames/catkin_ws/install
-
-Name: fusion2
-Description: Description of fusion2
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/max/RoboticGames/catkin_ws/install/lib 
-Requires: 
