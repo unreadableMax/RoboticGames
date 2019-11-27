@@ -45,6 +45,7 @@ class Fusion:
         self.KB_rot = 0.0
 
         self.CA_lin = 0.0
+        self.dist_to_target = 2.0
         self.HO_lin = 0.0
         self.FS_lin = 0.0
         self.KB_lin = 0.0
@@ -91,6 +92,7 @@ class Fusion:
 
     def HO_callback(self, signals):
         self.HO_rot = signals.angular.z
+        self.dist_to_target = signals.linear.z
         self.HO_lin = signals.linear.x
 
     def CA_callback(self, signals):
@@ -108,7 +110,11 @@ class Fusion:
 
     def combine_signals(self):
         res_signal = Twist()
-        # todo: wand-folger in CA rein kriegen
+
+        if self.dist_to_target < .6:
+            self.CA_rot = 0.0
+            self.CA_lin = 1.0
+
         res_signal.angular.z = prevail_gate(self.CA_rot,
                                             np.clip(or_gate(10.0*self.HO_rot, self.FS_rot), -1, 1))
 
