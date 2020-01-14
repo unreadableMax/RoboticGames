@@ -1,11 +1,13 @@
 #! /usr/bin/env python
-import numpy as np
 import rospy
-import math
+
+from path_prediction import max_min_angle_cat
 
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 
+# remove when wheelradius is fixed in pd3x
+VELOCITY_FACTOR = 2
 
 class Test:
     
@@ -15,35 +17,30 @@ class Test:
         rospy.Subscriber("/cat/dead_reckoning", Pose, self.dead_reckoning_callback)
         pub = rospy.Publisher("/cat/p3dx_velocity_controller/cmd_vel", Twist, queue_size=10)
         output = Twist()
-        speed = 1
-        distance = 3
-        current_distance = 0
+        speed = 0.7
         output.linear.x = speed
         
         while not rospy.is_shutdown():
-            #Setting the current time for distance calculus
+            #rospy.loginfo("x: " + str(self.position[0]) + " y: " + str(self.position[1]) + ' z: ' + str(self.orientation[0]))
+            output.angular.z = max_min_angle_cat(self.position, self.orientation[0], [-7, -1], 0)
+            rospy.loginfo(output.angular.z)
+            
             t0 = rospy.Time.now().to_sec()
+            t1 = rospy.Time.now().to_sec()
             
-            output.linear.x = 1
-            
-            while(current_distance < distance):
-                #Publish the velocity
+            # TODO remove VELOCITY_FACTOR when fixed
+            while(t1-t0 < 1 * VELOCITY_FACTOR):
                 pub.publish(output)
-                #Takes actual time to velocity calculus
-                t1=rospy.Time.now().to_sec()
-                #Calculates distancePoseStamped
-                current_distance= speed*(t1-t0)
-                #After the loop, stops the robot
-                
-            output.linear.x = 0
-                
+                t1 = rospy.Time.now().to_sec()
+            
             pub.publish(output)
             
+    
+    
     def dead_reckoning_callback(self, msg):
         self.position[0] = msg.position.x
         self.position[1] = msg.position.y
         self.orientation[0] = msg.orientation.z
-        rospy.loginfo("Orientation " + str(self.orientation[0]))
 
 if  __name__=="__main__":
     rospy.init_node("homing")
