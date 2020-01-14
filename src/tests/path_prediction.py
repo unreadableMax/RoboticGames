@@ -57,14 +57,8 @@ class Path_Predicter:
         return d
 
 def max_min_angle_cat(pos_cat, z_cat, pos_mouse, z_mouse):
-    print(pos_cat)
-    print(z_cat)
-    print(pos_mouse)
-    print(z_mouse)
     cat_path = Path_Predicter(max_s=CAT_MAX_SPEED, max_a=CAT_MAX_ANGLE)
     allp_cat = cat_path.predict_all(pos_cat, z_cat)
-    for result in allp_cat.values():
-        print('new_x: ' + str(result['x']) + ' new_y: ' + str(result['y']) + ' new_z:' + str(result['z']))
     
     mouse_path = Path_Predicter(max_s=MOUSE_MAX_SPEED, max_a=MOUSE_MAX_ANGLE)
     allp_mouse = mouse_path.predict_all(pos_mouse, z_mouse)
@@ -79,8 +73,8 @@ if __name__ == "__main__":
     startPointCat = [0.5966333174169903, -0.0002828363777853922]
     cat_path = Path_Predicter(max_s=CAT_MAX_SPEED, max_a=CAT_MAX_ANGLE)
     allp_cat = cat_path.predict_all(startPointCat, cat_z)
-    for result in allp_cat.values():
-        print('new_x: ' + str(result['x']) + ' new_y: ' + str(result['y']) + ' new_z:' + str(result['z']))
+    #for result in allp_cat.values():
+        #print('new_x: ' + str(result['x']) + ' new_y: ' + str(result['y']) + ' new_z:' + str(result['z']))
     mouse_z = 0
     startPointMouse = [0, -7]
     mouse_path = Path_Predicter(max_s=MOUSE_MAX_SPEED, max_a=MOUSE_MAX_ANGLE)

@@ -1,7 +1,8 @@
 <launch>
-	<!-- for the exercise the args argument in the first node needs to be varied -->
-	<node name="cat_dead_reckoning"      type="cat_dead_reckoning_sim.py" pkg="test" args="0.0"/>
-	<node name="homing" type="test.py"     pkg="test"/>
+	<node name="cat_dead_reckoning" type="cat_dead_reckoning_sim.py" pkg="test" args="0.0"/>
+	<node name="mouse_dead_reckoning" type="mouse_dead_reckoning_sim.py" pkg="test" args="0.0"/>
+	<node name="cat" type="cat.py" pkg="test"/>
+	<node name="mouse" type="mouse.py" pkg="test"/>
 	<node name="record" pkg="rosbag" type="record" args="-O homing_path /p3dx/p3dx/base_pose_ground_truth"/>
 	
 	<arg name="paused" default="false" />
@@ -19,14 +20,9 @@
 	</include>
 	
 	<group ns="/cat">
-	
-		<!-- Load the URDF into the ROS Parameter Server -->
-		
 		<param name="robot_description"
 			command="$(find xacro)/xacro.py --inorder '$(find p3dx_description)/urdf/pioneer3dx1.xacro'" />
 	
-		<!-- Run a python script to the send a service call to gazebo_ros to spawn
-			a URDF robot -->
 		<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
 			respawn="false" output="screen" args="-urdf -param robot_description -model cat -x 0 -y -0 -z 0" />
 		
@@ -38,9 +34,22 @@
 	        p3dx_velocity_controller
 	        --shutdown-timeout 3"
 	        output="screen"/>
+	</group>
 	
-		<!-- ros_control p3rd launch file -->
-		<!-- <include file="$(find p3dx_control)/launch/control.launch" /> -->
-		<!-- <include file="$(find report)/scripts/laser_to_sonar.py" /> -->
+	<group ns="/mouse">
+		<param name="robot_description"
+			command="$(find xacro)/xacro.py --inorder '$(find p3dx_description)/urdf/pioneer3dx.xacro'" />
+
+		<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
+			respawn="false" output="screen" args="-urdf -param robot_description -model mouse -x 3 -y 2 -z 0" />
+		
+		<rosparam command="load" file="$(find p3dx_control)/config/control.yaml" />
+		
+		<node name="base_controller_spawner" pkg="controller_manager" type="spawner"
+	        args="--namespace=/mouse
+	        p3dx_joint_publisher
+	        p3dx_velocity_controller
+	        --shutdown-timeout 3"
+	        output="screen"/>
 	</group>
 </launch>
