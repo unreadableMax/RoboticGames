@@ -24,7 +24,7 @@ class SimpleHoming:
                          Pose, self.NewTarget_callback)
 
         pup = rospy.Publisher(
-            "home_signal", Twist, queue_size=10)
+            "HO_signal_cat", Twist, queue_size=10)
         while not rospy.is_shutdown():
             output = Twist()
             output = closed_loop(
@@ -32,7 +32,6 @@ class SimpleHoming:
             pup.publish(output)
 
     def pose_callback(self, current_pose):
-        # rospy.loginfo("\n\n%s",current_pose)
         self.position = np.array(
             [current_pose.position.x, current_pose.position.y])
         self.orientation = current_pose.orientation.z
@@ -53,10 +52,10 @@ def closed_loop(position, orientation, target):
     # Regel Parameter:
     p_distance = 3.0  # 3.0
     p_rot = 1  # 2.0
-    max_speed = 1.0
+    max_lin_speed = 1.0
+    min_lin_speed = .9
     max_rot_speed = 1.0
     min_rot_speed = 0.0
-    min_lin_speed = .9
 
     v_target = target - position
     M_rot = np.matrix([[np.cos(orientation), -np.sin(orientation)],
@@ -72,13 +71,14 @@ def closed_loop(position, orientation, target):
 
     # ------------------Regelung----------------------
 
-    lin_speed = p_distance*distance_to_target*rot_error
+    #lin_speed = p_distance*distance_to_target*rot_error
+    lin_speed = rot_error*2.0
     if distance_to_target > .5:  # do only drive backwards if we are close enouth to the target
         velocity_adjustment.linear.x = np.clip(
-            lin_speed, min_lin_speed, max_speed)
+            lin_speed, min_lin_speed, max_lin_speed)
     else:
         velocity_adjustment.linear.x = np.clip(
-            lin_speed, -max_speed, max_speed)
+            lin_speed, -max_lin_speed, max_lin_speed)
 
     velocity_adjustment.linear.z = distance_to_target
 

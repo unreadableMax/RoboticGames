@@ -27,7 +27,7 @@
 			command="$(find xacro)/xacro.py --inorder '$(find p3dx_description)/urdf/pioneer3dx.xacro'" />
 	
 		<!-- Run a python script to the send a service call to gazebo_ros to spawn 
-			a URDF robot -->
+			a URDF robot (3,2)-->
 		<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
 			respawn="false" output="screen" args="-urdf -param robot_description -model mouse -x 3 -y 2 -z 0" />
 		
@@ -51,7 +51,7 @@
 			command="$(find xacro)/xacro.py --inorder '$(find p3dx_description)/urdf/pioneer3dx1.xacro'" />
 	
 		<!-- Run a python script to the send a service call to gazebo_ros to spawn 
-			a URDF robot -->
+			a URDF robot (0,-1)-->
 		<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
 			respawn="false" output="screen" args="-urdf -param robot_description -model cat -x 0 -y -1 -z 0" />
 		
@@ -69,17 +69,20 @@
 		<!-- <include file="$(find report)/scripts/laser_to_sonar.py" /> -->
 	</group>
 	
-	
 	<node name="laserToSonar" pkg="report" type="laser_to_sonar.py"/>
-	<node name="randomWalk" pkg="report" type="random_walk.py" output="screen"/>
+	<!--<node name="randomWalk" pkg="report" type="random_walk.py" output="screen"/>-->
 	<node name="record_mouse" pkg="rosbag" type="record" args="-O mouse_path /mouse/base_pose_ground_truth"/>
 	<node name="record_cat" pkg="rosbag" type="record" args="-O cat_path /cat/base_pose_ground_truth"/>
 	<node name="record" pkg="rosbag" type="record" args="-O path /cat/base_pose_ground_truth /mouse/base_pose_ground_truth"/>
 
 	<node name="cat_dead_reckoning"      type="cat_dead_reckoning_sim.py" pkg="report" args="0.0"/>
 	<node name="mouse_dead_reckoning"      type="mouse_dead_reckoning_sim.py" pkg="report" args="0.0"/>
-	<node name="collision_avoidance" type="col_avoid.py"     pkg="report"/>
-	<node name="free_space" type="free_space.py"     pkg="report"/>
+	<node name="collision_avoidance_cat" type="col_avoid.py"     pkg="report" args="cat"/>
+	<node name="collision_avoidance_mouse" type="col_avoid.py"     pkg="report" args="mouse"/>
+	<node name="free_space_cat" type="free_space.py"     pkg="report" args="cat"/>
+	<node name="free_space_mouse" type="free_space.py"     pkg="report" args="mouse"/>
 	<node name="homing" type="homing.py"     pkg="report" args="4.0 0.0"/>
-	<node name="fusion" type="fusion.py"     pkg="report"/>
+	<node name="flee" type="flee.py"     pkg="report" args="4.0 0.0"/>
+	<node name="fusion_cat" type="fusion.py"     pkg="report" args="cat"/>
+	<node name="fusion_mouse" type="fusion.py"     pkg="report" args="mouse"/>
 </launch>
