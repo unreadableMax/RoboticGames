@@ -59,7 +59,7 @@ def closed_loop(mouse_pos, mouse_orientation, cat_pos, cat_orientation):
     min_rot_speed = 0.0
     min_lin_speed = .9
 
-    # NEW: rotate target vector 180
+    # Nv_flee_global zeigt von katze weg
     v_flee_global = mouse_pos - cat_pos
     M_rot_mouse = np.matrix([[np.cos(mouse_orientation), -np.sin(mouse_orientation)],
                              [np.sin(mouse_orientation), np.cos(mouse_orientation)]])
@@ -73,7 +73,6 @@ def closed_loop(mouse_pos, mouse_orientation, cat_pos, cat_orientation):
     v_flee_rel2cat = np.asarray(np.dot(M_rot_cat.T, v_flee_global).T)
 
     # turn around 90 deg depending on how the cat looks at us:
-
     if np.sign(-v_flee_rel2cat[1]) > 0:
         v_flee_rel2mouse = np.array(
             [v_flee_rel2mouse[1], -v_flee_rel2mouse[0]])

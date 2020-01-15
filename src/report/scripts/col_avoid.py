@@ -15,6 +15,9 @@ class CollisionAvoidance:
         self.vel_x = 0.0
         self.rot_vel = 0.0
 
+        self.min_range = .3  # 0.5
+        self.max_range = .4
+
         # True -> we are the cat. False -> we are the mouse
         self.controlled_robot = sys.argv[1]
 
@@ -82,8 +85,6 @@ class CollisionAvoidance:
         p_rot_speed = 1.2  # 1.2
         max_lin_speed = 1.0  # .40
         max_rot_speed = 1.0
-        min_range = .2  # 0.5
-        max_range = .3
         #current_smallest_dist = np.min(sonar_ranges[1:6])
         current_smallest_dist = np.min(sonar_ranges)
         default_speed = 1.0  # 0.4
@@ -92,10 +93,10 @@ class CollisionAvoidance:
         force_strength = np.linalg.norm(force)
         rot_error = np.dot(force/force_strength, v_view)
 
-        if current_smallest_dist < max_range:
-            m = 1/(max_range-min_range)
+        if current_smallest_dist < self.max_range:
+            m = 1/(self.max_range-self.min_range)
             velocity_adjustment.linear.x = np.clip(
-                m*(current_smallest_dist-min_range), -max_lin_speed, max_lin_speed)
+                m*(current_smallest_dist-self.min_range), -max_lin_speed, max_lin_speed)
 
             turn_direction = -force[1]
             velocity_adjustment.angular.z = np.sign(
