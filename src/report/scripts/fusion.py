@@ -1,10 +1,9 @@
 #! /usr/bin/env python
-import numpy as np
-import rospy
 import sys
 
-from geometry_msgs.msg import Pose
-from geometry_msgs.msg import Twist
+import numpy as np
+import rospy
+from geometry_msgs.msg import Pose, Twist
 
 
 def and_gate(x, y):
@@ -38,6 +37,7 @@ class Fusion:
     def __init__(self):
         # the final position
         #home_max_values = np.array([float(sys.argv[1]), float(sys.argv[2])])
+        self.controlled_robot = sys.argv[1]
 
         self.CA_rot = 0.0
         self.HO_rot = 0.0
@@ -50,18 +50,37 @@ class Fusion:
         self.FS_lin = 0.0
         self.KB_lin = 0.0
 
-        self.lin_gain = 1.0
-        self.lin_max = 1.0
-        self.rot_gain = 1.0
-        self.rot_max = 1.0
-
         self.last_KB_callback_time = rospy.get_time()
 
-        # subscribers:
-        rospy.Subscriber("home_signal", Twist, self.HO_callback)
-        rospy.Subscriber("col_avoid_signal", Twist, self.CA_callback)
-        rospy.Subscriber("FS_signal", Twist, self.FS_callback)
-        rospy.Subscriber("KB_signal", Twist, self.KB_callback)
+        if self.controlled_robot == "cat":
+            # subscribers:
+            rospy.Subscriber("HO_signal_cat", Twist, self.HO_callback)
+            rospy.Subscriber("CA_signal_cat", Twist, self.CA_callback)
+            rospy.Subscriber("FS_signal_cat", Twist, self.FS_callback)
+            rospy.Subscriber("KB_signal_cat", Twist, self.KB_callback)
+
+            self.pup = rospy.Publisher(
+                "/cat/p3dx_velocity_controller/cmd_vel", Twist, queue_size=10)
+
+            self.lin_gain = 1.0
+            self.rot_gain = 1.0
+            self.lin_max = 1.0
+            self.rot_max = .9
+
+        elif self.controlled_robot == "mouse":
+            # subscribers:
+            rospy.Subscriber("HO_signal_mouse", Twist, self.HO_callback)
+            rospy.Subscriber("CA_signal_mouse", Twist, self.CA_callback)
+            rospy.Subscriber("FS_signal_mouse", Twist, self.FS_callback)
+            rospy.Subscriber("KB_signal_mouse", Twist, self.KB_callback)
+
+            self.pup = rospy.Publisher(
+                "/mouse/p3dx_velocity_controller/cmd_vel", Twist, queue_size=10)
+
+            self.lin_gain = 1.0
+            self.rot_gain = 1.0
+            self.lin_max = .9
+            self.rot_max = 1.0
 
         # rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=KB_signal
 
@@ -70,21 +89,22 @@ class Fusion:
         #self.home_max_speed = float(sys.argv[3])
         #self.home_max_rot = float(sys.argv[4])
 
-        pup = rospy.Publisher(
-            "/cat/p3dx_velocity_controller/cmd_vel", Twist, queue_size=10)
         while not rospy.is_shutdown():
 
-            final_signal = self.combine_signals()
-            #final_signal.angular.z = self.CA_rot
-            #final_signal.linear.x = self.CA_lin
-            #final_signal.angular.z = self.HO_rot
-            #final_signal.linear.x = 0.0
+            if self.controlled_robot == "cat":
+                final_signal = self.combine_signals_cat()
+                #final_signal.angular.z = self.CA_rot
+                #final_signal.linear.x = self.CA_lin
+                #final_signal.angular.z = self.HO_rot
+                #final_signal.linear.x = 0.0
+            else:
+                final_signal = self.combine_signals_mouse()
 
             final_signal.angular.z = np.clip(
                 final_signal.angular.z*self.rot_gain, -self.rot_max, self.rot_max)
             final_signal.linear.x = np.clip(
                 final_signal.linear.x*self.lin_gain, -self.lin_max, self.lin_max)
-            pup.publish(final_signal)
+            self.pup.publish(final_signal)
 
             if rospy.get_time() > self.last_KB_callback_time + .1:
                 self.KB_lin = 0.0
@@ -108,12 +128,27 @@ class Fusion:
         self.KB_lin = signals.linear.x
         self.last_KB_callback_time = rospy.get_time()
 
-    def combine_signals(self):
+    def combine_signals_cat(self):
         res_signal = Twist()
 
+        # ignore collision-signal if we are close anouth
         if self.dist_to_target < .6:
             self.CA_rot = 0.0
-            self.CA_lin = 1.0
+            self.CA_lin = self.HO_lin
+
+        res_signal.angular.z = prevail_gate(self.CA_rot,
+                                            np.clip(or_gate(10.0*self.HO_rot, self.FS_rot), -1, 1))
+
+        res_signal.linear.x = self.CA_lin
+
+        return res_signal
+
+    def combine_signals_mouse(self):
+        res_signal = Twist()
+
+        # if np.sign(self.FS_rot) != np.sign(self.HO_rot):
+        #    print("no Homing")
+        #    self.HO_rot = 0.0
 
         res_signal.angular.z = prevail_gate(self.CA_rot,
                                             np.clip(or_gate(10.0*self.HO_rot, self.FS_rot), -1, 1))

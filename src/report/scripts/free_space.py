@@ -2,6 +2,7 @@
 
 import numpy as np
 import rospy
+import sys
 from sensor_msgs.msg import PointCloud
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
@@ -28,20 +29,23 @@ class CollisionAvoidance:
         self.sonar_angles = self.sonar_angles / 360.0 * 2 * np.pi
         self.sonar_ranges = np.ones(len(self.sonar_angles))*10
 
-        # initialize 360 scan-vecs:
-        self.compare_vecs = np.array([[1, 0], [1, 1]/np.sqrt(2), [0, 1], [-1, 1]/np.sqrt(
-            2), [-1, 0], [-1, -1]/np.sqrt(2), [0, -1], [1, -1]/np.sqrt(2)])
-        self.initial_distance = 10
-        self.scan_ranges = np.array([self.initial_distance, self.initial_distance, self.initial_distance,
-                                     self.initial_distance, self.initial_distance, self.initial_distance, self.initial_distance, self.initial_distance])
+        # rospy.Subscriber("/p3dx/p3dx_velocity_controller/odom",
+        #                 Odometry, self.velocity_callback)
 
-        rospy.Subscriber("/p3dx/p3dx_velocity_controller/odom",
-                         Odometry, self.velocity_callback)
-        rospy.Subscriber("cat/sonar",
-                         PointCloud, self.sonar_callback)
+        # True -> we are the cat. False -> we are the mouse
+        self.controlled_robot = sys.argv[1]
+        if self.controlled_robot == "cat":
+            rospy.Subscriber("cat/sonar",
+                             PointCloud, self.sonar_callback)
 
-        self.free_space_puplisher = rospy.Publisher(
-            "FS_signal", Twist, queue_size=10)
+            self.free_space_puplisher = rospy.Publisher(
+                "FS_signal_cat", Twist, queue_size=10)
+        elif self.controlled_robot == "mouse":
+            rospy.Subscriber("mouse/sonar",
+                             PointCloud, self.sonar_callback)
+
+            self.free_space_puplisher = rospy.Publisher(
+                "FS_signal_mouse", Twist, queue_size=10)
 
         rospy.spin()
 
