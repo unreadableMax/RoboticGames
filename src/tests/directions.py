@@ -1,5 +1,7 @@
 from enum import Enum
 
+HALF_PI = 1.5708
+
 class Direction(Enum):
     STRONG_RIGHT = 2
     LIGHT_RIGHT = 1

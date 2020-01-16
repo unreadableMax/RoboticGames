@@ -1,13 +1,13 @@
 #! /usr/bin/env python
 import rospy
 
-from path_prediction import max_min_angle_cat
+from path_prediction import maxmin_solution_angle
 
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 
-# remove when wheelradius is fixed in pd3x
-VELOCITY_FACTOR = 2
+VELOCITY_FACTOR = 2 # remove when wheelradius is fixed in pd3x
+UPDATE_PREDICTION_DELTA = 1 # in s
 
 class Cat:
     
@@ -24,16 +24,14 @@ class Cat:
         output.linear.x = speed
         
         while not rospy.is_shutdown():
-            #rospy.loginfo("x: " + str(self.position[0]) + " y: " + str(self.position[1]) + ' z: ' + str(self.orientation[0]))
-            output.angular.z = max_min_angle_cat(self.position, self.orientation[0],
-                                                    self.mouse_position, self.mouse_orientation[0])
+            output.angular.z = maxmin_solution_angle(pos_cat=self.position, z_cat=self.orientation[0],
+                                                    pos_mouse=self.mouse_position, z_mouse=self.mouse_orientation[0],
+                                                    mouse_or_cat='cat', update_time=1.0)
             rospy.loginfo(output.angular.z)
             
             t0 = rospy.Time.now().to_sec()
             t1 = rospy.Time.now().to_sec()
-            
-            # TODO remove VELOCITY_FACTOR when fixed
-            while(t1-t0 < 1 * VELOCITY_FACTOR):
+            while(t1-t0 < UPDATE_PREDICTION_DELTA*VELOCITY_FACTOR): # TODO remove VELOCITY_FACTOR when fixed
                 pub.publish(output)
                 t1 = rospy.Time.now().to_sec()
             
@@ -44,6 +42,7 @@ class Cat:
         self.position[0] = msg.position.x
         self.position[1] = msg.position.y
         self.orientation[0] = msg.orientation.z
+        #rospy.loginfo("x: " + str(self.position[0]) + " y: " + str(self.position[1]) + ' z: ' + str(self.orientation[0]))
     
     def dead_reckoning_callback_mouse(self, msg):
         self.mouse_position[0] = msg.position.x
