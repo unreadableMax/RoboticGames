@@ -39,21 +39,19 @@ class Cat:
         print("r=", self.r)
 
         while not rospy.is_shutdown():
-            output.angular.z = maxmin_solution_angle(pos_cat=self.position, z_cat=self.orientation[0],
-                                                     pos_mouse=self.mouse_position, z_mouse=self.mouse_orientation[
-                                                         0],
-                                                     mouse_or_cat='cat', update_time=1.0)
-            rospy.loginfo(output.angular.z)
+
+            output.angular.z = omega
+            output.linear.x = v
 
             t0 = rospy.Time.now().to_sec()
             t1 = rospy.Time.now().to_sec()
             # TODO remove VELOCITY_FACTOR when fixed
             while(t1-t0 < UPDATE_PREDICTION_DELTA*VELOCITY_FACTOR):
-                # pub.publish(output)
+                pub.publish(output)
                 # test:
                 l = get_path_length(
                     self.r, self.orientation[0], self.position, self.mouse_position)
-
+                # print(l)
                 t1 = rospy.Time.now().to_sec()
 
             # pub.publish(output)
