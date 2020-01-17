@@ -13,8 +13,13 @@ from geometry_msgs.msg import Twist
 VELOCITY_FACTOR = 2  # remove when wheelradius is fixed in pd3x
 UPDATE_PREDICTION_DELTA = 1  # in s
 
-v = 0.7
-omega = 0.2
+v_cat = 0.7
+omega_cat = 0.2
+r_cat = 2.7  # experimentel ermittelt
+
+v_mouse = 0.2
+omega_mouse = 0.9
+r_mouse = 0.18  # experimentel ermittelt
 
 
 class Cat:
@@ -34,14 +39,10 @@ class Cat:
         speed = 0.7
         output.linear.x = speed
 
-        # new:
-        self.r = v/omega
-        print("r=", self.r)
-
         while not rospy.is_shutdown():
 
-            output.angular.z = omega
-            output.linear.x = v
+            output.angular.z = 0
+            output.linear.x = 0
 
             t0 = rospy.Time.now().to_sec()
             t1 = rospy.Time.now().to_sec()
@@ -50,8 +51,8 @@ class Cat:
                 pub.publish(output)
                 # test:
                 l = get_path_length(
-                    self.r, self.orientation[0], self.position, self.mouse_position)
-                # print(l)
+                    r_cat, self.orientation[0], self.position, self.mouse_position)
+                print(l)
                 t1 = rospy.Time.now().to_sec()
 
             # pub.publish(output)
