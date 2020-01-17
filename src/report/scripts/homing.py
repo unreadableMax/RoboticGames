@@ -58,8 +58,8 @@ def closed_loop(position, orientation, target):
     min_rot_speed = 0.0
 
     v_target = target - position
-    M_rot = np.matrix([[np.cos(orientation), -np.sin(orientation)],
-                       [np.sin(orientation), np.cos(orientation)]])
+    M_rot = np.array([[np.cos(orientation), -np.sin(orientation)],
+                      [np.sin(orientation), np.cos(orientation)]])
     v_target = np.asarray(np.dot(M_rot.T, v_target).T)
 
     distance_to_target = np.linalg.norm(v_target)
