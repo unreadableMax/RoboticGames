@@ -19,14 +19,24 @@ def get_path_length(r, orientation, pos, target_pos):
 
     if c < r:
         # target is inside the turning cycle
-        return 3.0/2.0 * np.pi * r + 2*r
+        return 2.0 * np.pi * r + (r-c)
 
-    # gamma ist immer positiv
-    gamma = np.arctan((p_target[1]-r) / p_target[0])
+    gamma = np.arccos(np.abs(p_target[0])/c)
 
     alpha = np.arccos(r/c)
 
-    betha = np.pi/2.0 - alpha + gamma
+    if p_target[0] > 0:
+        if p_target[1] < r:
+            betha = np.pi/2.0 - gamma - alpha
+        else:
+            betha = np.pi/2.0 + gamma - alpha
+    else:
+        if p_target[1] > r:
+            betha = 3.0*np.pi/2.0 - gamma - alpha
+        else:
+            betha = 3.0*np.pi/2.0 + gamma - alpha
+
+    #print("betha=", np.rad2deg(betha), "alpha=", np.rad2deg(alpha))
 
     u = betha*r
 
