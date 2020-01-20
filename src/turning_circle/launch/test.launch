@@ -1,7 +1,7 @@
 <launch>
 	<node name="cat_dead_reckoning" type="cat_dead_reckoning_sim.py" pkg="test" args="0.0"/>
 	<node name="mouse_dead_reckoning" type="mouse_dead_reckoning_sim.py" pkg="test" args="0.0"/>
-	<node name="cat" type="cat.py" pkg="test"/>
+	<!--<node name="cat" type="cat.py" pkg="test"/>-->
 	<node name="mouse" type="mouse.py" pkg="test"/>
 	<node name="record" pkg="rosbag" type="record" args="-O homing_path /p3dx/p3dx/base_pose_ground_truth"/>
 	
@@ -41,7 +41,7 @@
 			command="$(find xacro)/xacro.py --inorder '$(find p3dx_description)/urdf/pioneer3dx.xacro'" />
 
 		<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-			respawn="false" output="screen" args="-urdf -param robot_description -model mouse -x 3 -y 2 -z 0" />
+			respawn="false" output="screen" args="-urdf -param robot_description -model mouse -x -3 -y 7 -z 0" />
 		
 		<rosparam command="load" file="$(find p3dx_control)/config/control.yaml" />
 		
