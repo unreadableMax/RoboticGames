@@ -24,7 +24,7 @@
 			command="$(find xacro)/xacro.py --inorder '$(find p3dx_description)/urdf/pioneer3dx1.xacro'" />
 	
 		<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-			respawn="false" output="screen" args="-urdf -param robot_description -model cat -x 0 -y -0 -z 0" />
+			respawn="false" output="screen" args="-urdf -param robot_description -model cat -x 0 -y 0 -z 0" />
 		
 		<rosparam command="load" file="$(find p3dx_control)/config/control.yaml" />
 		

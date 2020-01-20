@@ -2,6 +2,16 @@ import math
 import numpy as np
 from directions import *
 
+from path_length import get_path_length
+
+v_cat = 0.7
+omega_cat = 0.2
+r_cat = 2.7  # experimentel ermittelt
+
+v_mouse = 0.2
+omega_mouse = 0.9
+r_mouse = 0.18  # experimentel ermittelt
+
 # Constants
 DISTANCE_DISTRIBUTION = 5 # distributes the distance from 0 to DISTANCE_DISTRIBUTION
 
@@ -49,13 +59,33 @@ def payout_infront_or_behind(cat_predictions, mouse_predictions, max_payout):
     print(slope)
 
 
+def payout_path_length(cat_predictions, mouse_predictions):
+    # create an empty matrix
+    m_path_length = np.zeros((5, 5, 2))
+    
+    for row_idx, cat_coords in enumerate(cat_predictions.values()):
+        for col_idx, mouse_coords in enumerate(mouse_predictions.values()):
+            cat_pos = [cat_coords['x'], cat_coords['y']]
+            mouse_pos = [mouse_coords['x'], mouse_coords['y']]
+            path_cat_to_mouse = get_path_length(
+                r_cat, cat_coords['z'], cat_pos, mouse_pos)
+            payout_mouse = path_cat_to_mouse
+            payout_cat = -path_cat_to_mouse
+            
+            m_path_length[row_idx][col_idx][0] = payout_cat
+            m_path_length[row_idx][col_idx][1] = payout_mouse
+    
+    return m_path_length
+
+
 '''
 adds all payout matrices together and returns the result
 '''
 def get_normalForm(cat_predictions, mouse_predictions):
     m_empty = np.zeros((5, 5, 2))
-    m_dist = payout_distance(cat_predictions, mouse_predictions, DISTANCE_DISTRIBUTION)
-    m_whole = m_empty + m_dist # here one can add other payouts
+    # m_dist = payout_distance(cat_predictions, mouse_predictions, DISTANCE_DISTRIBUTION)
+    m_path_length = payout_path_length(cat_predictions, mouse_predictions)
+    m_whole = m_empty + m_path_length # here one can add other payouts
     return m_whole
 
 

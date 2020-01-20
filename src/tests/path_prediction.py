@@ -10,7 +10,7 @@ CAT_MAX_ANGLE = 0.2
 MOUSE_MAX_SPEED = 0.2
 MOUSE_MAX_ANGLE = 0.9
 
-class Path_Predicter:
+class Path_Predictor:
     
     def __init__(self, max_s, max_a, update_time=1.0):
         self.time_delta = update_time
@@ -70,11 +70,11 @@ def maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, mouse_or_cat, upda
         sys.exit()
     
     # gather all predicted positions for cat
-    cat_path = Path_Predicter(CAT_MAX_SPEED, CAT_MAX_ANGLE, update_time)
+    cat_path = Path_Predictor(CAT_MAX_SPEED, CAT_MAX_ANGLE, update_time)
     all_paths_cat = cat_path.predict_all(pos_cat, z_cat)
     
     # gather all predicted positions for cat
-    mouse_path = Path_Predicter(MOUSE_MAX_SPEED, MOUSE_MAX_ANGLE, update_time)
+    mouse_path = Path_Predictor(MOUSE_MAX_SPEED, MOUSE_MAX_ANGLE, update_time)
     all_paths_mouse = mouse_path.predict_all(pos_mouse, z_mouse)
     
     angles_cat_mouse = max_min_solution(all_paths_cat, all_paths_mouse, CAT_MAX_ANGLE, MOUSE_MAX_ANGLE)
@@ -88,13 +88,13 @@ def maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, mouse_or_cat, upda
 if __name__ == "__main__":
     cat_z = 0
     startPointCat = [0, 0]
-    cat_path = Path_Predicter(max_s=CAT_MAX_SPEED, max_a=CAT_MAX_ANGLE)
+    cat_path = Path_Predictor(max_s=CAT_MAX_SPEED, max_a=CAT_MAX_ANGLE)
     all_paths_cat = cat_path.predict_all(startPointCat, cat_z)
     #for result in all_paths_cat.values():
         #print('new_x: ' + str(result['x']) + ' new_y: ' + str(result['y']) + ' new_z:' + str(result['z']))
     mouse_z = 0
-    startPointMouse = [0, -7]
-    mouse_path = Path_Predicter(max_s=MOUSE_MAX_SPEED, max_a=MOUSE_MAX_ANGLE)
+    startPointMouse = [0, 7]
+    mouse_path = Path_Predictor(max_s=MOUSE_MAX_SPEED, max_a=MOUSE_MAX_ANGLE)
     all_paths_mouse = mouse_path.predict_all(startPointMouse, mouse_z)
     #for result in all_paths_mouse.values():
         #print('new_x: ' + str(result['x']) + ' new_y: ' + str(result['y']) + ' new_z:' + str(result['z']))
