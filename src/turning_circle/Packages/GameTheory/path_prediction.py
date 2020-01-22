@@ -5,10 +5,10 @@ from directions import *
 from game_theory import max_min_solution
 
 # Constants defined by the task
-CAT_MAX_SPEED = 0.7
-CAT_MAX_ANGLE = 0.2
-MOUSE_MAX_SPEED = 0.2
-MOUSE_MAX_ANGLE = 0.9
+CAT_MAX_SPEED = 0.4
+CAT_MAX_ANGLE = 0.8
+MOUSE_MAX_SPEED = 0.35
+MOUSE_MAX_ANGLE = 1.0
 
 class Path_Predicter:
     
@@ -81,13 +81,23 @@ def maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, mouse_or_cat, upda
     angle = angles_cat_mouse['c_angle'] if mouse_or_cat == 'cat'else angles_cat_mouse['m_angle']
     return angle
 
-
+# returns the predicted angle for mouse in a range of [-1, 1]
+def angle_change_mouse_scaled(pos_cat, z_cat, pos_mouse, z_mouse, update_time=1.0):
+    angle = maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, 'mouse', update_time)
+    flattened_angle = (2 / (2 * MOUSE_MAX_ANGLE)) * angle
+    return flattened_angle
+    
+# returns the predicted angle for mouse in a range of [-1, 1]
+def angle_change_cat_scaled(pos_cat, z_cat, pos_mouse, z_mouse, update_time=1.0):
+    angle = maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, 'cat', update_time)
+    flattened_angle = (2 / (2 * CAT_MAX_ANGLE)) * angle
+    return flattened_angle
 
 
 # Just some tests
 if __name__ == "__main__":
     cat_z = 0
-    startPointCat = [-1, 4]
+    startPointCat = [0, 0]
     cat_path = Path_Predicter(max_s=CAT_MAX_SPEED, max_a=CAT_MAX_ANGLE)
     all_paths_cat = cat_path.predict_all(startPointCat, cat_z)
     #for result in all_paths_cat.values():
@@ -102,3 +112,8 @@ if __name__ == "__main__":
     angles = max_min_solution(all_paths_cat, all_paths_mouse, CAT_MAX_ANGLE, MOUSE_MAX_ANGLE)
     print('mouse angle: ' + str(angles['m_angle']))
     print('cat angle: ' + str(angles['c_angle']))
+    
+    a_mouse = angle_change_mouse_scaled(startPointCat, cat_z, startPointMouse, mouse_z, 1.0)
+    print('flattened angle mouse: ' + str(a_mouse))
+    a_cat = angle_change_cat_scaled(startPointCat, cat_z, startPointMouse, mouse_z, 1.0)
+    print('flattened angle mouse: ' + str(a_cat))

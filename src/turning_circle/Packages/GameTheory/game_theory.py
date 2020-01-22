@@ -4,13 +4,8 @@ from directions import *
 
 from path_length import get_path_length
 
-v_cat = 0.7
-omega_cat = 0.2
-r_cat = 2.7  # experimentel ermittelt
-
-v_mouse = 0.2
-omega_mouse = 0.9
-r_mouse = 0.18  # experimentel ermittelt
+r_cat = 0.4  # experimentel ermittelt
+r_mouse = 0.27  # experimentel ermittelt
 
 # Constants
 DISTANCE_DISTRIBUTION = 5 # distributes the distance from 0 to DISTANCE_DISTRIBUTION
@@ -42,7 +37,7 @@ def payout_distance(cat_predictions, mouse_predictions, min_payout):
         tuple[1] = tuple[1] / max_dist * min_payout
     return m_dist
 
-# TODO not finished!
+# TODO not used and not finished!
 def payout_infront_or_behind(cat_predictions, mouse_predictions, min_payout):
     cat_angle = -HALF_PI - HALF_PI / 2
     if (abs(cat_angle) <= HALF_PI):
