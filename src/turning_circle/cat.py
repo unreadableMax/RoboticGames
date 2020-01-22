@@ -7,7 +7,7 @@ from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 
 VELOCITY_FACTOR = 2 # remove when wheelradius is fixed in pd3x
-UPDATE_PREDICTION_DELTA = 1 # in s
+UPDATE_PREDICTION_DELTA = 0.1 # in s
 
 class Cat:
     
