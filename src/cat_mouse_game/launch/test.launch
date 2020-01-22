@@ -1,5 +1,9 @@
 <launch>
+	<node name="laserToSonar" pkg="report" type="laser_to_sonar.py"/>
+
 	<node name="cat_dead_reckoning" type="cat_dead_reckoning_sim.py" pkg="cat_mouse_game" args="0.0"/>
+	<node name="collision_avoidance_cat" type="col_avoid.py"     pkg="cat_mouse_game" args="cat"/>
+	<node name="collision_avoidance_mouse" type="col_avoid.py"     pkg="cat_mouse_game" args="mouse"/>
 	<node name="mouse_dead_reckoning" type="mouse_dead_reckoning_sim.py" pkg="cat_mouse_game" args="0.0"/>
 	<node name="cat" type="cat.py" pkg="cat_mouse_game"/>
 	<node name="mouse" type="mouse.py" pkg="cat_mouse_game"/>
