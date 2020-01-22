@@ -87,17 +87,18 @@ def maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, mouse_or_cat, upda
 # Just some tests
 if __name__ == "__main__":
     cat_z = 0
-    startPointCat = [0, 0]
+    startPointCat = [-1, 4]
     cat_path = Path_Predicter(max_s=CAT_MAX_SPEED, max_a=CAT_MAX_ANGLE)
     all_paths_cat = cat_path.predict_all(startPointCat, cat_z)
     #for result in all_paths_cat.values():
         #print('new_x: ' + str(result['x']) + ' new_y: ' + str(result['y']) + ' new_z:' + str(result['z']))
     mouse_z = 0
-    startPointMouse = [0, -7]
+    startPointMouse = [0, 0]
     mouse_path = Path_Predicter(max_s=MOUSE_MAX_SPEED, max_a=MOUSE_MAX_ANGLE)
     all_paths_mouse = mouse_path.predict_all(startPointMouse, mouse_z)
     #for result in all_paths_mouse.values():
         #print('new_x: ' + str(result['x']) + ' new_y: ' + str(result['y']) + ' new_z:' + str(result['z']))
         
     angles = max_min_solution(all_paths_cat, all_paths_mouse, CAT_MAX_ANGLE, MOUSE_MAX_ANGLE)
-    print(angles['c_angle'])
+    print('mouse angle: ' + str(angles['m_angle']))
+    print('cat angle: ' + str(angles['c_angle']))

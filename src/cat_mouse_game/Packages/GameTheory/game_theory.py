@@ -19,9 +19,9 @@ DISTANCE_DISTRIBUTION = 5 # distributes the distance from 0 to DISTANCE_DISTRIBU
 calculates the NormalMatrix based on the cost of distance from mouse to cat
 each matrix entry holds two value
 the first value is the payout of the cat and the second is the payout of the mouse
-max_payout defines the distribution of 0 to max -> (0,...,max_payout)
+min_payout defines the distribution of 0 to max -> (0,...,min_payout)
 '''
-def payout_distance(cat_predictions, mouse_predictions, max_payout):
+def payout_distance(cat_predictions, mouse_predictions, min_payout):
     # create an empty matrix
     m_dist = np.zeros((5, 5, 2))
     
@@ -38,12 +38,12 @@ def payout_distance(cat_predictions, mouse_predictions, max_payout):
     # change distribution and flip the payout for cat because distance is bad for cat
     temp = m_dist.reshape(-1, 2)
     for tuple in temp:
-        tuple[0] = - tuple[0] / max_dist * max_payout
-        tuple[1] = tuple[1] / max_dist * max_payout
+        tuple[0] = - tuple[0] / max_dist * min_payout
+        tuple[1] = tuple[1] / max_dist * min_payout
     return m_dist
 
 # TODO not finished!
-def payout_infront_or_behind(cat_predictions, mouse_predictions, max_payout):
+def payout_infront_or_behind(cat_predictions, mouse_predictions, min_payout):
     cat_angle = -HALF_PI - HALF_PI / 2
     if (abs(cat_angle) <= HALF_PI):
         xPart = 1 - abs(cat_angle) / HALF_PI
@@ -86,6 +86,7 @@ def get_normalForm(cat_predictions, mouse_predictions):
     # m_dist = payout_distance(cat_predictions, mouse_predictions, DISTANCE_DISTRIBUTION)
     m_path_length = payout_path_length(cat_predictions, mouse_predictions)
     m_whole = m_empty + m_path_length # here one can add other payouts
+    #print(m_whole)
     return m_whole
 
 
@@ -98,29 +99,29 @@ def max_min_solution(cat_predictions, mouse_predictions, max_cat_angle, max_mous
     m = get_normalForm(cat_predictions, mouse_predictions)
     
     # calculates best strategie for mouse
-    max_pay_cat_per_col = None
+    best_min_pay_mouse = None
     best_idx_mouse = None
     for col_idx in range(5):    # the columns are the strategies of the mouse
-        max_pay = 0
+        min_pay = None
         for row_idx in range(5):
-            cat_payment = m[row_idx][col_idx][0]
-            max_pay = cat_payment if cat_payment > max_pay else max_pay
-        if max_pay_cat_per_col == None or max_pay_cat_per_col > max_pay:
+            mouse_payment = m[row_idx][col_idx][1]
+            min_pay = mouse_payment if min_pay == None or mouse_payment < min_pay else min_pay
+        if best_min_pay_mouse == None or min_pay > best_min_pay_mouse:
             best_idx_mouse = col_idx
-            max_pay_cat_per_col = max_pay
+            best_min_pay_mouse = min_pay
     mouse_angle = Direction.get_angle_from_index(best_idx_mouse, max_mouse_angle)
     
     # calculates best strategie for cat
-    max_pay_mouse_per_row = None
+    best_min_pay_cat = None
     best_idx_cat = None
     for row_idx in range(5):   # the rows are the strategies of the cat
-        max_pay = 0
+        min_pay = None
         for col_idx in range(5):
-            mouse_payment = m[row_idx][col_idx][1]
-            max_pay = mouse_payment if mouse_payment > max_pay else max_pay
-        if max_pay_mouse_per_row == None or max_pay_mouse_per_row > max_pay:
+            cat_payment = m[row_idx][col_idx][0]
+            min_pay = cat_payment if min_pay == None or cat_payment < min_pay else min_pay
+        if best_min_pay_cat == None or best_min_pay_cat < min_pay:
             best_idx_cat = row_idx
-            max_pay_mouse_per_row = max_pay
+            best_min_pay_cat = min_pay
     cat_angle = Direction.get_angle_from_index(best_idx_cat, max_cat_angle)
     
     return {'c_angle': cat_angle, 'm_angle': mouse_angle}
