@@ -4,6 +4,8 @@ import rospy
 import sys
 
 from Packages.GameTheory.path_prediction import angle_change_mouse_scaled
+from Packages.GameTheory.path_prediction import MOUSE_MAX_SPEED
+from Packages.GameTheory.path_prediction import MOUSE_MAX_ANGLE
 from Packages.AnalogGates.analog_gates import prevail_gate
 
 from geometry_msgs.msg import Pose
@@ -31,14 +33,14 @@ class Mouse:
         pub = rospy.Publisher(
             "/mouse/p3dx_velocity_controller/cmd_vel", Twist, queue_size=10)
         output = Twist()
-        speed = 0.2
-        output.linear.x = speed
+        output.linear.x = MOUSE_MAX_SPEED
 
         while not rospy.is_shutdown():
             GT_rot = angle_change_mouse_scaled(pos_mouse=self.position, z_mouse=self.orientation[0],
                                                pos_cat=self.cat_position, z_cat=self.cat_orientation[0], update_time=1.0)
 
-            output.angular.z = prevail_gate(self.CA_rot, GT_rot)
+            output.angular.z = prevail_gate(
+                self.CA_rot, GT_rot)*MOUSE_MAX_ANGLE
 
             rospy.loginfo('mouse: ' + str(output.angular.z))
 

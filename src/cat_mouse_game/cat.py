@@ -7,6 +7,9 @@ from Packages.AnalogGates.analog_gates import prevail_gate
 from geometry_msgs.msg import Pose
 from geometry_msgs.msg import Twist
 
+from Packages.GameTheory.path_prediction import CAT_MAX_SPEED
+from Packages.GameTheory.path_prediction import CAT_MAX_ANGLE
+
 VELOCITY_FACTOR = 2  # remove when wheelradius is fixed in pd3x
 UPDATE_PREDICTION_DELTA = 0.1  # in s
 
@@ -32,15 +35,15 @@ class Cat:
             "/cat/p3dx_velocity_controller/cmd_vel", Twist, queue_size=10)
         output = Twist()
         speed = 0.7
-        output.linear.x = speed
+        output.linear.x = CAT_MAX_SPEED
 
         while not rospy.is_shutdown():
             GT_rot = angle_change_cat_scaled(pos_cat=self.position, z_cat=self.orientation[0],
                                              pos_mouse=self.mouse_position, z_mouse=self.mouse_orientation[0], update_time=1.0)
 
-            rospy.loginfo('cat: ' + str(output.angular.z))
+            output.angular.z = prevail_gate(self.CA_rot, GT_rot)*CAT_MAX_ANGLE
 
-            output.angular.z = prevail_gate(self.CA_rot, GT_rot)
+            rospy.loginfo('cat: ' + str(output.angular.z))
 
             t0 = rospy.Time.now().to_sec()
             t1 = rospy.Time.now().to_sec()
