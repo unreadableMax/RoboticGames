@@ -17,9 +17,20 @@ def get_path_length(r, orientation, pos, target_pos):
 
     c = np.linalg.norm(p_target-np.array([0, r]))
 
+    robot_radius = 0.4
+    secure_distance = 2*robot_radius + .1
+    dist2target = np.linalg.norm(p_target)
+
+    if dist2target < secure_distance:
+        return dist2target - secure_distance
+
     if c < r:
         # target is inside the turning cycle
         return 2.0 * np.pi * r + (r-c)
+        vr = p_target - np.array([0, r])
+        vre = vr / np.linalg.norm(vr)
+        p_target = np.array(vre*r+[0, r])
+        c = r
 
     gamma = np.arccos(np.abs(p_target[0])/c)
 
@@ -42,4 +53,4 @@ def get_path_length(r, orientation, pos, target_pos):
 
     d = np.sin(alpha)*c
 
-    return d + u
+    return (d + u)*(d + u)
