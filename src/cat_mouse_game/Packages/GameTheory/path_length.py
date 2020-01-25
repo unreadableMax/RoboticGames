@@ -53,4 +53,4 @@ def get_path_length(r, orientation, pos, target_pos):
 
     d = np.sin(alpha)*c
 
-    return (d + u)*(d + u)
+    return (d + u)
