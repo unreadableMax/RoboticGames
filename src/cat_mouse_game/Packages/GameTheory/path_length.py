@@ -5,7 +5,7 @@ import numpy as np
 
 
 def pay_out_function(r, orientation, pos, target_pos):
-    pass
+    return how_strong_have_to_turn(r, orientation, pos, target_pos)*get_path_length(r, orientation, pos, target_pos)
 
 
 def get_path_length(r, orientation, pos, target_pos):
@@ -60,5 +60,20 @@ def get_path_length(r, orientation, pos, target_pos):
     return (d + u)
 
 
-def how_strong_have_to_turn():
-    pass
+def how_strong_have_to_turn(r, orientation, pos, target_pos):
+    # calculate p_target, relative to robot:
+    M_transform = np.array([[np.cos(orientation), -np.sin(orientation)],
+                            [np.sin(orientation), np.cos(orientation)]])
+    target = np.array(target_pos)-np.array(pos)
+    p_target = np.asarray(np.dot(M_transform.T, target).T)
+
+    robot_radius = 0.4
+    secure_distance = 2*robot_radius + .1
+    dist2target = np.linalg.norm(p_target)
+
+    if dist2target < secure_distance:
+        return 1.0
+
+    view_vector = np.array([1, 0])
+    e_target = p_target / dist2target
+    return -(np.dot(view_vector, e_target)-1.0)/2.0
