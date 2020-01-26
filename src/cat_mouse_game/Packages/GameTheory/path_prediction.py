@@ -69,6 +69,7 @@ class Path_Predicter:
         d['right'] = st_right
         return d
 
+    # l = v*t
     def predict_point_exact(self, pos, rot, left, r, l):
         a = l/r
         v_r = np.array([1, 0])
