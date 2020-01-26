@@ -4,6 +4,10 @@ import numpy as np
 #r = v/omega
 
 
+def pay_out_function(r, orientation, pos, target_pos):
+    pass
+
+
 def get_path_length(r, orientation, pos, target_pos):
 
     # calculate p_target, relative to robot:
@@ -54,3 +58,7 @@ def get_path_length(r, orientation, pos, target_pos):
     d = np.sin(alpha)*c
 
     return (d + u)
+
+
+def how_strong_have_to_turn():
+    pass
