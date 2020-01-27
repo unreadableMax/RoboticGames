@@ -5,7 +5,10 @@ import numpy as np
 
 
 def pay_out_function(r, orientation, pos, target_pos):
-    return how_strong_have_to_turn(r, orientation, pos, target_pos)*get_path_length(r, orientation, pos, target_pos)
+    turning = how_strong_have_to_turn(r, orientation, pos, target_pos)
+    path = get_path_length(r, orientation, pos, target_pos)
+
+    return turning*path + 2*turning
 
 
 def get_path_length(r, orientation, pos, target_pos):
