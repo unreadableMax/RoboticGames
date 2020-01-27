@@ -34,7 +34,7 @@ class Cat:
         pub = rospy.Publisher(
             "/cat/p3dx_velocity_controller/cmd_vel", Twist, queue_size=10)
         output = Twist()
-        speed = 0.7
+
         output.linear.x = CAT_MAX_SPEED
 
         while not rospy.is_shutdown():
