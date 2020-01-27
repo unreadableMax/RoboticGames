@@ -41,7 +41,6 @@ class Cat:
             GT_rot = angle_change_cat_scaled(pos_cat=self.position, z_cat=self.orientation[0],
                                              pos_mouse=self.mouse_position, z_mouse=self.mouse_orientation[0], update_time=1.0)
 
-            self.CA_rot = 0.0
             output.angular.z = prevail_gate(self.CA_rot, GT_rot)*CAT_MAX_ANGLE
 
             rospy.loginfo('cat: ' + str(output.angular.z))
