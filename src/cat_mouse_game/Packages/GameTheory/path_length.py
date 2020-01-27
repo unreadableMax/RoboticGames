@@ -8,7 +8,7 @@ def pay_out_function(r, orientation, pos, target_pos):
     turning = how_strong_have_to_turn(r, orientation, pos, target_pos)
     path = get_path_length(r, orientation, pos, target_pos)
 
-    return turning*path + 2*turning
+    return path*turning
 
 
 def get_path_length(r, orientation, pos, target_pos):
@@ -28,12 +28,12 @@ def get_path_length(r, orientation, pos, target_pos):
     secure_distance = 2*robot_radius + .1
     dist2target = np.linalg.norm(p_target)
 
-    if dist2target < secure_distance:
-        return dist2target - secure_distance
+    # if dist2target < secure_distance:
+    #    return dist2target - secure_distance
 
     if c < r:
         # target is inside the turning cycle
-        return 2.0 * np.pi * r + (r-c)
+        # return 3/2.0 * np.pi + (r-c)
         vr = p_target - np.array([0, r])
         vre = vr / np.linalg.norm(vr)
         p_target = np.array(vre*r+[0, r])
@@ -74,8 +74,8 @@ def how_strong_have_to_turn(r, orientation, pos, target_pos):
     secure_distance = 2*robot_radius + .1
     dist2target = np.linalg.norm(p_target)
 
-    if dist2target < secure_distance:
-        return 1.0
+    # if dist2target < secure_distance:
+    #    return 1.0
 
     view_vector = np.array([1, 0])
     e_target = p_target / dist2target
