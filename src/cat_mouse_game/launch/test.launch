@@ -44,6 +44,7 @@
 	        output="screen"/>
 	</group>
 	
+	
 	<group ns="/mouse">
 		<param name="robot_description"
 			command="$(find xacro)/xacro.py --inorder '$(find p3dx_description)/urdf/pioneer3dx.xacro'" />
