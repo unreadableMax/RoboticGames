@@ -21,7 +21,7 @@ class CollisionAvoidance:
         self.rot_vel = 0.0
         self.d_c = .3
         self.d_s = .4
-        self.robot_radius = .2
+        self.robot_radius = .3
         self.r = 0
         self.pos = np.array([0.0,0.0])
         self.orientation = 0.0
@@ -110,7 +110,7 @@ class CollisionAvoidance:
         # Kraft welche auf Roboter wirkt
         force = self.calculate_force(sonar_angles, sonar_ranges)
 
-        if self.is_obstacle_our_target(force):
+        if self.is_obstacle_our_target(force,smallest_dist):
             velocity_adjustment.angular.z = 0.0
             return velocity_adjustment
 
@@ -126,7 +126,7 @@ class CollisionAvoidance:
 
         return velocity_adjustment
 
-    def is_obstacle_our_target(self,force):
+    def is_obstacle_our_target(self,force,smallest_distance):
         force_strength = np.linalg.norm(force)
 
         v_target = self.target_pos - self.pos
@@ -142,7 +142,7 @@ class CollisionAvoidance:
         ef = np.array(force/force_strength)
         #print(np.dot(-ef,ev_target))
         # print(np.dot(-ef,ev_target))
-        if dist2target-self.robot_radius < self.d_s:
+        if dist2target-self.robot_radius-.1 < self.d_s:
             if np.dot(-ef,ev_target) > .95:
                 print(np.dot(-ef,ev_target))
                 return True
