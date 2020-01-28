@@ -21,7 +21,7 @@ class CollisionAvoidance:
         self.rot_vel = 0.0
         self.d_c = .3
         self.d_s = .4
-        self.robot_radius = .3
+        self.robot_radius = .2
         self.r = 0
         self.pos = np.array([0.0,0.0])
         self.orientation = 0.0

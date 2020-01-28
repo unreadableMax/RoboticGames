@@ -50,7 +50,7 @@
 
 		<!--bad starting point-->
 		<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
-			respawn="false" output="screen" args="-urdf -param robot_description -model mouse -x 0 -y 1 -z 0" />
+			respawn="false" output="screen" args="-urdf -param robot_description -model mouse -x 3.5 -y 0 -z 0" />
 		<!--very good starting point-->
 		<!--<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
 			respawn="false" output="screen" args="-urdf -param robot_description -model mouse -x -0.7 -y 0.5 -z 0" />-->
