@@ -88,6 +88,26 @@ class Path_Predicter:
             v_rot = self.rotate_vector(v_rot, -a)
             return point2r + v_rot
 
+    # l = v*t        r = Katzenradius oder Mausradius
+    def predict_all_exact(self, pos, rot, r, l):
+
+        v_forward = np.array([1, 0])
+        v_forward = self.rotate_vector(v_forward, rot)
+        forward = np.array(pos) + v_forward*l
+
+        st_left = self.predict_point_exact(pos, rot, True, r, l)
+        li_left = self.predict_point_exact(pos, rot, True, 2.0*r, l)
+        st_right = self.predict_point_exact(pos, rot, False, r, l)
+        li_right = self.predict_point_exact(pos, rot, False, 2.0*r, l)
+
+        d = collections.OrderedDict()
+        d['left'] = st_left
+        d['half_left'] = li_left
+        d['forward'] = forward
+        d['half_right'] = li_right
+        d['right'] = st_right
+        return d
+
     # positive winkel = linksdrehung
     def rotate_vector(self, v, a):
         ca = np.cos(a)
