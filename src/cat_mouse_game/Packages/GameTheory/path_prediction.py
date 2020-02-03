@@ -5,6 +5,10 @@ import numpy as np
 from directions import *
 from game_theory import max_min_solution
 
+
+from Packages.GameTheory.game_theory import r_cat
+from Packages.GameTheory.game_theory import r_mouse
+
 # Constants defined by the task
 CAT_MAX_SPEED = 0.4
 CAT_MAX_ANGLE = 0.8
@@ -73,20 +77,23 @@ class Path_Predicter:
     def predict_point_exact(self, pos, rot, left, r, l):
         a = l/r
         v_r = np.array([1, 0])
+        res_point = np.array([0.0, 0.0])
         if left:
             v_r = self.rotate_vector(v_r, rot+np.pi/2.0)
             v_r = v_r*r
             point2r = pos+v_r
             v_rot = -v_r
             v_rot = self.rotate_vector(v_rot, a)
-            return point2r + v_rot
+            res_point = point2r + v_rot
+            return {"x": res_point[0], "y": res_point[1], "z": rot+a}
         else:
             v_r = self.rotate_vector(v_r, rot-np.pi/2.0)
             v_r = v_r*r
             point2r = pos+v_r
             v_rot = -v_r
             v_rot = self.rotate_vector(v_rot, -a)
-            return point2r + v_rot
+            res_point = point2r + v_rot
+            return {"x": res_point[0], "y": res_point[1], "z": rot-a}
 
     # l = v*t        r = Katzenradius oder Mausradius
     def predict_all_exact(self, pos, rot, r, l):
@@ -94,6 +101,7 @@ class Path_Predicter:
         v_forward = np.array([1, 0])
         v_forward = self.rotate_vector(v_forward, rot)
         forward = np.array(pos) + v_forward*l
+        forward = {"x": forward[0], "y": forward[1], "z": rot}
 
         st_left = self.predict_point_exact(pos, rot, True, r, l)
         li_left = self.predict_point_exact(pos, rot, True, 2.0*r, l)
@@ -126,11 +134,15 @@ def maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, mouse_or_cat, upda
 
     # gather all predicted positions for cat
     cat_path = Path_Predicter(CAT_MAX_SPEED, CAT_MAX_ANGLE, update_time)
-    all_paths_cat = cat_path.predict_all(pos_cat, z_cat)
+    #all_paths_cat = cat_path.predict_all(pos_cat, z_cat)
+    all_paths_cat = cat_path.predict_all_exact(
+        pos_cat, z_cat, r_cat, np.pi/3.0*r_cat)
 
     # gather all predicted positions for cat
     mouse_path = Path_Predicter(MOUSE_MAX_SPEED, MOUSE_MAX_ANGLE, update_time)
-    all_paths_mouse = mouse_path.predict_all(pos_mouse, z_mouse)
+    #all_paths_mouse = mouse_path.predict_all(pos_mouse, z_mouse)
+    all_paths_mouse = mouse_path.predict_all_exact(
+        pos_mouse, z_mouse, r_mouse, np.pi/3.0*r_mouse)
 
     angles_cat_mouse = max_min_solution(
         all_paths_cat, all_paths_mouse, CAT_MAX_ANGLE, MOUSE_MAX_ANGLE)

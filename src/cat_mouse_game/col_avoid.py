@@ -110,7 +110,8 @@ class CollisionAvoidance:
         # Kraft welche auf Roboter wirkt
         force = self.calculate_force(sonar_angles, sonar_ranges)
 
-        if self.is_obstacle_our_target(force,smallest_dist):
+        # if self.controlled_robot == "cat":
+        if self.does_other_bot_produce_force(force,smallest_dist):
             velocity_adjustment.angular.z = 0.0
             return velocity_adjustment
 
@@ -126,7 +127,7 @@ class CollisionAvoidance:
 
         return velocity_adjustment
 
-    def is_obstacle_our_target(self,force,smallest_distance):
+    def does_other_bot_produce_force(self,force,smallest_distance):
         force_strength = np.linalg.norm(force)
 
         v_target = self.target_pos - self.pos
