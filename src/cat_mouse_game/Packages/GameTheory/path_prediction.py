@@ -136,13 +136,13 @@ def maxmin_solution_angle(pos_cat, z_cat, pos_mouse, z_mouse, mouse_or_cat, upda
     cat_path = Path_Predicter(CAT_MAX_SPEED, CAT_MAX_ANGLE, update_time)
     #all_paths_cat = cat_path.predict_all(pos_cat, z_cat)
     all_paths_cat = cat_path.predict_all_exact(
-        pos_cat, z_cat, r_cat, np.pi/3.0*r_cat)
+        pos_cat, z_cat, r_cat, np.pi/2.0*r_cat)
 
     # gather all predicted positions for cat
     mouse_path = Path_Predicter(MOUSE_MAX_SPEED, MOUSE_MAX_ANGLE, update_time)
     #all_paths_mouse = mouse_path.predict_all(pos_mouse, z_mouse)
     all_paths_mouse = mouse_path.predict_all_exact(
-        pos_mouse, z_mouse, r_mouse, np.pi/3.0*r_mouse)
+        pos_mouse, z_mouse, r_mouse, np.pi/2.0*r_mouse)
 
     angles_cat_mouse = max_min_solution(
         all_paths_cat, all_paths_mouse, CAT_MAX_ANGLE, MOUSE_MAX_ANGLE)

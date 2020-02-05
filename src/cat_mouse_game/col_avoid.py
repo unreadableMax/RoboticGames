@@ -21,11 +21,13 @@ class CollisionAvoidance:
         self.rot_vel = 0.0
         self.d_c = .3
         self.d_s = .4
-        self.robot_radius = .2
+        self.d_offset = .4
+        self.robot_radius = .1
         self.r = 0
         self.pos = np.array([0.0,0.0])
         self.orientation = 0.0
         self.target_pos = np.array([0.0,0.0])
+        
 
         # True -> we are the cat. False -> we are the mouse
         self.controlled_robot = sys.argv[1]
@@ -46,14 +48,14 @@ class CollisionAvoidance:
 
             self.r = r_cat
             self.d_c = r_cat + self.robot_radius #critical distance -> full CA
-            self.d_s = self.d_c + .1 # start distance -> start with CA
+            self.d_s = self.d_c + self.d_offset # start distance -> start with CA
         elif self.controlled_robot == "mouse":
             rospy.Subscriber("mouse/sonar", PointCloud,
                              self.sonar_callback)
             self.CA_puplisher = rospy.Publisher(
                 "CA_signal_mouse", Twist, queue_size=10)
             self.d_c = r_mouse + self.robot_radius
-            self.d_s = self.d_c + .1
+            self.d_s = self.d_c + self.d_offset
             self.r = r_mouse
 
         rospy.spin()
@@ -110,15 +112,18 @@ class CollisionAvoidance:
         # Kraft welche auf Roboter wirkt
         force = self.calculate_force(sonar_angles, sonar_ranges)
 
-        # if self.controlled_robot == "cat":
+        w = 1.0
         if self.does_other_bot_produce_force(force,smallest_dist):
-            velocity_adjustment.angular.z = 0.0
-            return velocity_adjustment
+                velocity_adjustment.angular.z = 0.0
+                if self.controlled_robot == "cat":
+                    return velocity_adjustment
+                else:
+                    w = .3
 
         turn_direction = np.sign(-force[1])
         
         m = -1.0/(self.d_s-self.d_c)
-        adjust_power = m*(smallest_dist-self.d_s)
+        adjust_power = m*(smallest_dist-self.d_s)*w
 
         velocity_adjustment.angular.z = turn_direction * adjust_power
 
