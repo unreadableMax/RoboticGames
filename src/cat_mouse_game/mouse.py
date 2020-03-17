@@ -39,6 +39,7 @@ class Mouse:
             GT_rot = angle_change_mouse_scaled(pos_mouse=self.position, z_mouse=self.orientation[0],
                                                pos_cat=self.cat_position, z_cat=self.cat_orientation[0], update_time=1.0)
 
+            self.CA_rot = 0.0
             output.angular.z = prevail_gate(
                 self.CA_rot, GT_rot)*MOUSE_MAX_ANGLE
 
